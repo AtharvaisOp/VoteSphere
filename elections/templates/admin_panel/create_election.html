@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Election - Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Create New Election</h1>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_title">Election Title</label>
+                        <input type="text" name="title" id="id_title" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_description">Description</label>
+                        <textarea name="description" id="id_description" class="form-control" rows="4"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_start_date">Start Date & Time</label>
+                        <input type="datetime-local" name="start_date" id="id_start_date" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="id_end_date">End Date & Time</label>
+                        <input type="datetime-local" name="end_date" id="id_end_date" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="is_active" id="id_is_active" checked>
+                            <span class="form-label" style="margin: 0;">Active</span>
+                        </label>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Create Election</button>
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

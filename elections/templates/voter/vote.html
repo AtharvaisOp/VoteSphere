@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Vote - {{ election.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Cast Your Vote</h1>
+    <p class="section-subtitle">{{ election.title }}</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p style="font-size: 1.1rem; color: var(--text-dark);">
+                <strong>Important:</strong> You can only vote once in this election. Please review your choices
+                carefully before submitting.
+            </p>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="card mb-3">
+            <div class="card-header">{{ field.label }}</div>
+            <div class="card-body">
+                <div class="radio-group">
+                    {% for choice in field %}
+                    <label class="radio-option">
+                        {{ choice.tag }}
+                        <span style="flex: 1;">{{ choice.choice_label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success btn-lg">Submit Vote</button>
+            <a href="{% url 'candidate_list' election.id %}" class="btn btn-outline">Review Candidates</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

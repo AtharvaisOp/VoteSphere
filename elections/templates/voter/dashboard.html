@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - VoteSphere{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+    <p class="section-subtitle">Your Voter Dashboard</p>
+
+    <!-- Ongoing Elections -->
+    {% if ongoing_elections %}
+    <div class="mb-4">
+        <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark);">🗳️ Active Elections</h2>
+        <div class="grid grid-2">
+            {% for election in ongoing_elections %}
+            <div class="card">
+                <div class="card-header">{{ election.title }}</div>
+                <div class="card-body">
+                    <p>{{ election.description|truncatewords:20 }}</p>
+                    <p class="mt-2"><strong>Ends:</strong> {{ election.end_date|date:"F d, Y g:i A" }}</p>
+
+                    {% if election.id in user_votes %}
+                    <span class="badge badge-success mt-2">✓ You have voted</span>
+                    {% else %}
+                    <span class="badge badge-warning mt-2">⚠ Not voted yet</span>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'candidate_list' election.id %}" class="btn btn-primary">View Candidates</a>
+                    {% if election.id not in user_votes %}
+                    <a href="{% url 'cast_vote' election.id %}" class="btn btn-success">Cast Vote</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <h3>No Active Elections</h3>
+            <p class="mt-2">There are currently no ongoing elections. Check back later!</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upcoming Elections -->
+    {% if upcoming_elections %}
+    <div class="mb-4">
+        <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark);">📅 Upcoming Elections</h2>
+        <div class="grid grid-2">
+            {% for election in upcoming_elections %}
+            <div class="card">
+                <div class="card-header">{{ election.title }}</div>
+                <div class="card-body">
+                    <p>{{ election.description|truncatewords:20 }}</p>
+                    <p class="mt-2"><strong>Starts:</strong> {{ election.start_date|date:"F d, Y g:i A" }}</p>
+                    <span class="badge badge-info">Upcoming</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Ended Elections -->
+    {% if ended_elections %}
+    <div class="mb-4">
+        <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark);">📊 Past Elections</h2>
+        <div class="grid grid-2">
+            {% for election in ended_elections %}
+            <div class="card">
+                <div class="card-header">{{ election.title }}</div>
+                <div class="card-body">
+                    <p>{{ election.description|truncatewords:20 }}</p>
+                    <p class="mt-2"><strong>Ended:</strong> {{ election.end_date|date:"F d, Y" }}</p>
+                    <span class="badge badge-danger">Ended</span>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'election_results' election.id %}" class="btn btn-outline">View Results</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

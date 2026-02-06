@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - VoteSphere{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+        <source src="{% static 'videos/hero-video.mp4' %}" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>VoteSphere</h1>
+        <p>Secure, Transparent, and Fair College Elections</p>
+        <div class="hero-buttons">
+            {% if request.session.voter_hash or user.is_staff %}
+            <a href="{% url 'voter_dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+            {% else %}
+            <a href="{% url 'request_otp' %}" class="btn btn-primary">Get Started</a>
+            <a href="{% url 'request_otp' %}" class="btn btn-secondary">Login</a>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<div class="container">
+    <h2 class="section-title">Why VoteSphere?</h2>
+    <p class="section-subtitle">Modern digital voting for the next generation of student leaders</p>
+
+    <div class="grid grid-3">
+        <div class="card">
+            <div class="card-header">🔒 Secure Voting</div>
+            <div class="card-body">
+                One-vote-per-student enforcement with robust authentication ensures fair and tamper-proof elections.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">📊 Transparent Results</div>
+            <div class="card-body">
+                Real-time vote counting with visual charts and statistics for complete transparency.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">🌍 SDG 16 Aligned</div>
+            <div class="card-body">
+                Supporting Peace, Justice, and Strong Institutions through democratic participation.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">⚡ Easy to Use</div>
+            <div class="card-body">
+                Intuitive interface makes voting simple and accessible for all students.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">📱 Accessible</div>
+            <div class="card-body">
+                Vote from anywhere, anytime during the election window using any device.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">🎯 Fair Process</div>
+            <div class="card-body">
+                Equal opportunity for all candidates with clear rules and transparent processes.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Elections -->
+{% if active_elections %}
+<div class="container">
+    <h2 class="section-title">Active Elections</h2>
+    <p class="section-subtitle">Cast your vote now!</p>
+
+    <div class="grid grid-2">
+        {% for election in active_elections %}
+        <div class="card">
+            <div class="card-header">{{ election.title }}</div>
+            <div class="card-body">
+                <p>{{ election.description|truncatewords:30 }}</p>
+                <p class="mt-2"><strong>Ends:</strong> {{ election.end_date|date:"F d, Y g:i A" }}</p>
+            </div>
+            <div class="card-footer">
+                {% if request.session.voter_hash or user.is_staff %}
+                <a href="{% url 'candidate_list' election.id %}" class="btn btn-primary">View Candidates</a>
+                {% else %}
+                <a href="{% url 'request_otp' %}" class="btn btn-primary">Login to Vote</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Call to Action -->
+<div class="container text-center">
+    <h2 class="section-title">Ready to Make Your Voice Heard?</h2>
+    <p class="section-subtitle">Join thousands of students participating in democratic elections</p>
+    {% if not request.session.voter_hash and not user.is_staff %}
+    <a href="{% url 'request_otp' %}" class="btn btn-primary btn-lg">Get Started</a>
+    {% endif %}
+</div>
+{% endblock %}

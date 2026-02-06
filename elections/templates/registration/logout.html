@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Logged Out - VoteSphere{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">✓ Successfully Logged Out</h2>
+                <p style="font-size: 1.1rem; color: var(--text-dark); margin-bottom: 2rem;">
+                    You have been successfully logged out of VoteSphere. Thank you for participating in democratic
+                    elections!
+                </p>
+
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{% url 'home' %}" class="btn btn-primary">Go to Home</a>
+                    <a href="{% url 'login' %}" class="btn btn-success">Login Again</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h3 style="margin-bottom: 1rem;">What's Next?</h3>
+                <ul style="text-align: left; margin-left: 2rem; line-height: 2;">
+                    <li>Check out upcoming elections on the home page</li>
+                    <li>Learn more about our SDG 16 alignment</li>
+                    <li>Login again to participate in active elections</li>
+                    <li>Share VoteSphere with your fellow students</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

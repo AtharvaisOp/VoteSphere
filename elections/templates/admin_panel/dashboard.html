@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - VoteSphere{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Admin Dashboard</h1>
+    <p class="section-subtitle">Manage elections and candidates</p>
+
+    <!-- Statistics -->
+    <div class="grid grid-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem;">{{ elections.count}}
+                </h3>
+                <p style="color: var(--text-light);">Total Elections</p>
+            </div>
+        </div>
+
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 0.5rem;">
+                    {{total_candidates}}</h3>
+                <p style="color: var(--text-light);">Total Candidates</p>
+            </div>
+        </div>
+
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 0.5rem;">{{ total_votes }}</h3>
+                <p style="color: var(--text-light);">Total Votes</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card mb-4">
+        <div class="card-header">Quick Actions</div>
+        <div class="card-body">
+            <a href="{% url 'create_election' %}" class="btn btn-primary">Create New Election</a>
+            <a href="/admin/" class="btn btn-outline">Django Admin Panel</a>
+        </div>
+    </div>
+
+    <!-- Elections List -->
+    <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark);">All Elections</h2>
+
+    {% if elections %}
+    <div class="grid grid-2">
+        {% for election in elections %}
+        <div class="card">
+            <div class="card-header">
+                {{ election.title }}
+                {% if election.is_manually_ended %}
+                <span class="badge" style="background: var(--warning-color); color: white;">⚠️ Manually Ended</span>
+                {% elif election.has_ended %}
+                <span class="badge badge-danger">● Ended</span>
+                {% elif election.is_ongoing %}
+                <span class="badge badge-success">● Active</span>
+                {% else %}
+                <span class="badge badge-info">● Upcoming</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <p>{{ election.description|truncatewords:20 }}</p>
+                <p class="mt-2">
+                    <strong>Period:</strong>
+                    {{ election.start_date|date:"M d, Y" }} - {{election.end_date|date:"Md,Y"}}
+                </p>
+                <p>
+                    <strong>Candidates:</strong> {{ election.candidates.count }}
+                </p>
+                <p>
+                    <strong>Votes:</strong> {{ election.votes.count }}
+                </p>
+
+                <div class="mt-3">
+                    <h5 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">Current Results</h5>
+                    {% if election.results_by_position %}
+                    {% for position, candidates in election.results_by_position.items %}
+                    <div class="mb-2">
+                        <strong>{{ position|title }}:</strong>
+                        <ul style="list-style: none; padding-left: 0; margin-top: 5px;">
+                            {% for candidate in candidates %}
+                            <li
+                                style="display: flex; justify-content: space-between; font-size: 0.9em; border-bottom: 1px dashed #f0f0f0; padding: 2px 0;">
+                                <span>{{ candidate.name }}</span>
+                                <span class="badge" style="background: var(--light-bg); color: var(--text-dark);">
+                                    {{candidate.votes }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted">No candidates yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'manage_candidates' election.id %}" class="btn btn-primary">Manage Candidates</a>
+                <a href="{% url 'election_results' election.id %}" class="btn btn-outline">View Charts</a>
+                {% if election.is_ongoing %}
+                <a href="{% url 'end_election' election.id %}" class="btn"
+                    style="background: var(--danger-color); color: rgb(0, 170, 255);">End Election</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center">
+            <h3>No Elections Yet</h3>
+            <p class="mt-2">Create your first election to get started!</p>
+            <a href="{% url 'create_election' %}" class="btn btn-primary mt-2">Create Election</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

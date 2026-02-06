@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Results - {{ election.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Election Results</h1>
+    <p class="section-subtitle">{{ election.title }}</p>
+
+    <!-- Statistics -->
+    <div class="grid grid-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem;">{{ stats.total_votes }}</h3>
+                <p style="color: var(--text-light);">Total Votes Cast</p>
+            </div>
+        </div>
+
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 0.5rem;">{{ stats.unique_voters }}</h3>
+                <p style="color: var(--text-light);">Voters Participated</p>
+            </div>
+        </div>
+
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 0.5rem;">{{ stats.total_candidates }}</h3>
+                <p style="color: var(--text-light);">Total Candidates</p>
+            </div>
+        </div>
+    </div>
+
+    {% if election.has_ended %}
+    <!-- Winners -->
+    {% if stats.winners %}
+    <div class="card mb-4">
+        <div class="card-header">🏆 Winners</div>
+        <div class="card-body">
+            <div class="grid grid-2">
+                {% for position, winner_data in stats.winners.items %}
+                <div style="padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">
+                        {% for choice_key, choice_label in position_choices %}
+                        {% if choice_key == position %}{{ choice_label }}{% endif %}
+                        {% endfor %}
+                    </h4>
+                    <p style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark);">
+                        {{ winner_data.candidate.name }}
+                    </p>
+                    <p style="color: var(--text-light);">{{ winner_data.votes }} votes</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Charts -->
+    {% if bar_chart_path %}
+    <div class="card mb-4">
+        <div class="card-header">📊 Vote Distribution</div>
+        <div class="card-body text-center">
+            <img src="{{ bar_chart_path }}" alt="Bar Chart" style="max-width: 100%; height: auto; border-radius: 8px;">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if pie_chart_path %}
+    <div class="card mb-4">
+        <div class="card-header">🥧 Vote Percentage</div>
+        <div class="card-body text-center">
+            <img src="{{ pie_chart_path }}" alt="Pie Chart" style="max-width: 100%; height: auto; border-radius: 8px;">
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <h3>Results Not Yet Available</h3>
+            <p class="mt-2">Results will be displayed after the election ends on {{ election.end_date|date:"F d, Y g:i A" }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Detailed Results by Position -->
+    <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-dark);">Detailed Results</h2>
+    {% for position_key, candidates in positions.items %}
+    <div class="card mb-3">
+        <div class="card-header">
+            {% for choice_key, choice_label in position_choices %}
+            {% if choice_key == position_key %}{{ choice_label }}{% endif %}
+            {% endfor %}
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Votes</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in candidates %}
+                    <tr>
+                        <td><strong>{{ item.candidate.name }}</strong></td>
+                        <td>{{ item.votes }}</td>
+                        <td>
+                            {% if stats.unique_voters > 0 %}
+                            {{ item.votes|floatformat:0 }}
+                            {% else %}
+                            0%
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'voter_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

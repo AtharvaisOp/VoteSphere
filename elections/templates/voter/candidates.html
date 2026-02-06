@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Candidates - {{ election.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">{{ election.title }}</h1>
+    <p class="section-subtitle">{{ election.description }}</p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Election Period:</strong> {{ election.start_date|date:"F d, Y g:i A" }} - {{ election.end_date|date:"F d, Y g:i A" }}</p>
+            {% if election.is_ongoing %}
+            <span class="badge badge-success">● Active</span>
+            {% elif election.has_ended %}
+            <span class="badge badge-danger">● Ended</span>
+            {% else %}
+            <span class="badge badge-info">● Upcoming</span>
+            {% endif %}
+
+            {% if has_voted %}
+            <span class="badge badge-success ml-2">✓ You have voted in this election</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if positions %}
+    {% for position_key, candidates in positions.items %}
+    <div class="mb-4">
+        <h2 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--primary-color);">
+            {% for choice_key, choice_label in position_choices %}
+            {% if choice_key == position_key %}
+            {{ choice_label }}
+            {% endif %}
+            {% endfor %}
+        </h2>
+
+        <div class="grid grid-2">
+            {% for candidate in candidates %}
+            <div class="candidate-card">
+                {% if candidate.photo %}
+                <img src="{{ candidate.photo.url }}" alt="{{ candidate.name }}" class="candidate-photo">
+                {% else %}
+                <div class="candidate-photo"
+                    style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; font-weight: bold;">
+                    {{ candidate.name|slice:":1" }}
+                </div>
+                {% endif %}
+
+                <div class="candidate-info">
+                    <div class="candidate-name">{{ candidate.name }}</div>
+                    <div class="candidate-position">{{ candidate.get_position_display }}</div>
+                    <div class="candidate-description">{{ candidate.description }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="text-center mt-4">
+        {% if election.is_ongoing and not has_voted %}
+        <a href="{% url 'cast_vote' election.id %}" class="btn btn-success btn-lg">Cast Your Vote</a>
+        {% elif has_voted %}
+        <p class="text-center" style="color: var(--secondary-color); font-weight: 600;">Thank you for voting!</p>
+        {% elif election.has_ended %}
+        <a href="{% url 'election_results' election.id %}" class="btn btn-primary">View Results</a>
+        {% endif %}
+        <a href="{% url 'voter_dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center">
+            <h3>No Candidates Yet</h3>
+            <p class="mt-2">Candidates will be added soon. Check back later!</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

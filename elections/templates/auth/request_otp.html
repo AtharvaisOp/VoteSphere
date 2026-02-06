@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Request OTP - VoteSphere{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-shield-alt"></i> Secure Login
+                    </h3>
+                    <p class="mb-0 mt-2">Email OTP Authentication</p>
+                </div>
+                <div class="card-body p-5">
+                    <p class="text-muted mb-4">
+                        Enter your college email address to receive a one-time password (OTP) for secure login.
+                    </p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Display form errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Email field -->
+                        <div class="mb-4">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                                {{ form.email.label }}
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-2">
+                                    {{ form.email.errors }}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                Use your official college email address (e.g., student@college.edu)
+                            </small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
+                            <i class="fas fa-paper-plane me-2"></i>Send OTP
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Check your email for the 6-digit code
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security notice -->
+            <div class="alert alert-info mt-4 text-center">
+                <i class="fas fa-lock me-2"></i>
+                <small>
+                    <strong>Privacy Protected:</strong> Your email will be hashed and deleted after verification.
+                    Your vote remains 100% anonymous.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    
+    .btn-primary {
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,123,255,0.4);
+    }
+</style>
+{% endblock %}

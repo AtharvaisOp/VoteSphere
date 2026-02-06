@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}End Election - {{ election.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">End Election</h1>
+
+    <div class="card">
+        <div class="card-header" style="background: var(--warning-color); color: white;">
+            ⚠️ Confirm Election End
+        </div>
+        <div class="card-body">
+            <h3>{{ election.title }}</h3>
+            <p class="mt-2">{{ election.description }}</p>
+
+            <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                <p><strong>Scheduled End Date:</strong> {{ election.end_date|date:"F d, Y g:i A" }}</p>
+                <p><strong>Current Status:</strong>
+                    {% if election.is_ongoing %}
+                    <span style="color: var(--success-color); font-weight: 600;">● Active</span>
+                    {% else %}
+                    <span style="color: var(--info-color); font-weight: 600;">● Upcoming</span>
+                    {% endif %}
+                </p>
+                <p><strong>Total Votes Cast:</strong> {{ election.votes.count }}</p>
+                <p><strong>Total Candidates:</strong> {{ election.candidates.count }}</p>
+            </div>
+
+            <div
+                style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1.5rem 0; border-radius: 4px;">
+                <strong style="color: #856404;">⚠️ Warning:</strong>
+                <p style="color: #856404; margin-top: 0.5rem; margin-bottom: 0;">Ending this election will:</p>
+                <ul style="margin-top: 0.5rem; margin-bottom: 0; color: #856404;">
+                    <li>Immediately stop all voting</li>
+                    <li>Make results publicly visible</li>
+                    <li>This action cannot be undone</li>
+                </ul>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn" style="background: var(--danger-color); color: rgb(0, 81, 255);">
+                        End Election Now
+                    </button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
